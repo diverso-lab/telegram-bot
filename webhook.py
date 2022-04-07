@@ -11,6 +11,7 @@ import os
 app = Flask(__name__)
 
 webhook_secret = os.environ['WEBHOOK_SECRET']
+host = os.environ['APP_HOST']
 
 
 def verify_signature(req):
@@ -35,4 +36,4 @@ def hook_root():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host=host)
