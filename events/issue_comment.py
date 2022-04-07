@@ -1,4 +1,4 @@
-MAX_COMMENT_LENGTH = 200
+from utils.utils import truncate_comment, escape_characters
 
 
 def parse_issue_comment(json):
@@ -13,26 +13,26 @@ def parse_issue_comment(json):
 
 
 def notify_new_pull_request_comment(json):
+    repository_name = json['repository']['name']
     sender = json['sender']['login']
     text = truncate_comment(json['comment']['body'])
     number = json['issue']['number']
-    title = json['issue']['title']
+    title = escape_characters(json['issue']['title'])
+    comment_url = json['comment']['html_url']
 
-    notification = '{} has commented pull request "#{}:{}":\n\n{}.'.format(
-        sender, number, title, text)
+    notification = '🔵 *{}*\n\n💬 {} has commented pull request [#{}: {}]({})\n\n{}'.format(
+        repository_name, sender, number, title, comment_url, text)
     return notification
 
 
 def notify_new_issue_comment(json):
+    repository_name = json['repository']['name']
     sender = json['sender']['login']
     text = truncate_comment(json['comment']['body'])
     number = json['issue']['number']
-    title = json['issue']['title']
+    title = escape_characters(json['issue']['title'])
+    comment_url = json['comment']['html_url']
 
-    notification = '{} has commented issue "#{}:{}":\n\n{}.'.format(
-        sender, number, title, text)
+    notification = '🔵 *{}*\n\n💬 {} has commented issue [#{}: {}]({})\n\n{}'.format(
+        repository_name, sender, number, title, comment_url, text)
     return notification
-
-
-def truncate_comment(comment):
-    return comment[:MAX_COMMENT_LENGTH] + ".." if len(comment) > MAX_COMMENT_LENGTH else comment

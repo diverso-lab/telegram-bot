@@ -1,3 +1,6 @@
+from utils.utils import escape_characters
+
+
 def parse_workflow_run(json):
     result = None
     if json['workflow_run']['status'] == 'completed' and json['workflow_run']['conclusion'] == 'failure':
@@ -7,10 +10,11 @@ def parse_workflow_run(json):
 
 def notify_failed_workflow(json):
     repository_name = json['repository']['name']
-    workflow_name = json['workflow_run']['name']
-    workflow_run = json['workflow_run']['head_commit']['message']
+    workflow_name = escape_characters(json['workflow_run']['name'])
+    workflow_run = escape_characters(
+        json['workflow_run']['head_commit']['message'])
     html_url = json['workflow_run']['html_url']
 
-    notification = '{}\n\nWorkflow {} run "{}" has failed.\n\n{}'.format(
+    notification = '🔵 *{}*\n\n❌ Workflow *{}* run [{}]({}) has failed.'.format(
         repository_name, workflow_name, workflow_run, html_url)
     return notification
